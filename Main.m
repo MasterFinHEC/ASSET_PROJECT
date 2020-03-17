@@ -54,7 +54,7 @@ Signal = SignalComputing(returns,firstData); %Computing all the signals
 
 targetVol = 0.1; %Setting the target Volatility
 
-leverage = Leverage(WeightsVolParity,returns,targetVol); %Finding a vector of leverage, each period.
+[leverage,PortfolioVol] = Leverage(WeightsVolParity,returns,targetVol); %Finding a vector of leverage, each period.
 
 %% Finding the returns of the strategy 
 
@@ -86,9 +86,33 @@ colormap winter
 % Add title and axis labels
 title('Repartition of weights through asset classes')
 xlabel('Years')
-ylabel('%')
+ylabel('Weights')
 ylim([0 1])
 
 %% Find all the other ratios
 
+Margin = MCR(WeightsVolParity,returns,PortfolioVol);
 
+%Plot of the Repartition of weights
+
+MCRClasses = zeros(385,5);
+
+for i = 1:385
+    MCRClasses(i,1) = sum(Margin(i,1:7)) ;
+     MCRClasses(i,2) = sum(Margin(i,8:11)) ;
+      MCRClasses(i,3) = sum(Margin(i,12:21)) ;
+       MCRClasses(i,4) = sum(Margin(i,22:28)) ;
+        MCRClasses(i,5) = sum(Margin(i,29:35)) ;
+end
+
+%Plot of the Repartition of weights
+figure
+area(monthdate(8:end), MCRClasses(8:end,:))
+colormap winter
+% Add a legend
+%legend('Energy', 'Fixed Income', 'Commodities', 'Equities', 'Currencies','Location','South','Orientation','horizontal')
+% Add title and axis labels
+title('Repartition of MCR through asset classes')
+xlabel('Years')
+ylabel('Weights')
+ylim([-10 110])
