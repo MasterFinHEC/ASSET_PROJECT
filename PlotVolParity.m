@@ -1,5 +1,15 @@
 %% Plots Volatility Strategy
 
+%Plot of the return
+f = figure('visible','off');
+plot(monthdate(2:end),Retour)
+print(f,'Plot_VolParity/StrategyReturns', '-dpng', '-r300')
+
+%Plot of cumulative return 
+f = figure('visible','off');
+plot(monthdate(2:end),cumReturn)
+print(f,'Plot_VolParity/StrategyCumuReturns', '-dpng', '-r300')
+
 %Plot of the Repartition of weights
 WeightsClasses = zeros(385,5);
 
