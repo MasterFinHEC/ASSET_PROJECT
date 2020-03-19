@@ -1,17 +1,22 @@
 %% Plots Risk Parity Strategy
 
 %Plot of the return
+f = figure('visible','off');
 plot(monthdate(2:end),ReturnRiskParity)
+print(f,'Plot_RiskParity/StrategyReturns', '-dpng', '-r300')
 
 %Plot of cumulative return 
+f = figure('visible','off');
 plot(monthdate(2:end),CumuReturnRiskPar)
+print(f,'Plot_RiskParity/StrategyCumuReturns', '-dpng', '-r300')
 
+
+%Plot of the Repartition of weights
 GrossRiskPar = abs(RiskPar);
 for i = 1:length(GrossRiskPar)
     total = sum(GrossRiskPar(i,:));
     GrossRiskPar(i,:) = GrossRiskPar(i,:)*100/total;
 end
-%Plot of the Repartition of weights
 
 WeightsClassesRiskPar = zeros(385,5);
 
@@ -23,8 +28,8 @@ for i = 1:385
         WeightsClassesRiskPar(i,5) = sum(GrossRiskPar(i,29:35)) ;
 end
 
-%Plot of the Repartition of weights
-figure
+
+f = figure('visible','off');
 area(monthdate, WeightsClassesRiskPar)
 colormap winter
 % Add a legend
@@ -34,7 +39,10 @@ title('Repartition of weights through asset classes - Risk Par')
 xlabel('Years')
 ylabel('Weights')
 ylim([0 100])
+print(f,'Plot_RiskParity/RepartitionOfWeights', '-dpng', '-r300')
 
+
+%Plot of the Repartition of MCR
 MCRClasses = zeros(385,5);
 
 for i = 1:385
@@ -45,8 +53,7 @@ for i = 1:385
         MCRClasses(i,5) = sum(MarginRiskParity(i,29:35)) ;
 end
 
-%Plot of the Repartition of weights
-figure
+f = figure('visible','off');
 area(monthdate, MCRClasses)
 colormap winter
 % Add a legend
@@ -56,3 +63,4 @@ title('Repartition of MCR through asset classes - Risk Parity')
 xlabel('Years')
 ylabel('Weights')
 ylim([-10 110])
+print(f,'Plot_RiskParity/RepartitionOfMCR', '-dpng', '-r300')
