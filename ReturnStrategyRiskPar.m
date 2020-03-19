@@ -9,7 +9,6 @@ function [strat] = ReturnStrategyRiskPar(Weights,Leverage,Returns)
 % OUTPUT:
 % The return of the strategy (vector of return)
 
-Returns = Returns + 1; 
 strat= zeros(length(Weights)-1,1);
 
     for i = 1:length(Weights)-1
