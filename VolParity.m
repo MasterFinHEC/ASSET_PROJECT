@@ -42,12 +42,13 @@ position = 1; %Setting a position value
                     vola(z)= std(Returns(i-90:i,IndexAvailable(z))); %Volatility of each available assets
             end 
                
-                sumvola = sum(vola); %Sum of vol.
+            invola=vola.^-1; %Inverting the volatility
+        sumvola = sum(invola); %Sum of inverse vol.
                 
       %Computing the Gross weights for the available assets
         for j = 1:length(IndexAvailable) %Loop Going over the number of available assets
 
-            weights(position,IndexAvailable(j)) = (vola(j).^-1)/((sumvola).^-1); %Computing the Weights
+            weights(position,IndexAvailable(j)) = (vola(j).^-1)/(sumvola); %Computing the Weights
   
         end
       
