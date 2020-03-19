@@ -45,6 +45,9 @@ beq = []; %No Bounds on the linear constraint
 lb = []; %No Bounds on the weights
 ub = []; %No Bounds on the weights
 
+%Disabling useless Warnings during optimisation
+warning ( 'off' , 'MATLAB:nearlySingularMatrix')
+
 %Setting a position index allowing to move month by month on the matrix
 position = 1; %Position Index
 
@@ -54,6 +57,7 @@ position = 1; %Position Index
 %   Every 20 days (a month) - period of rebalancing
 %   Until the end of the return.
 % *************************************
+disp('Optimisation is starting !')
     for i = 253:20:length(Returns) 
         
         if position == round(round((length(Returns)-252)/20,0)/10,0)
@@ -108,5 +112,6 @@ position = 1; %Position Index
         position = position + 1;
     end
     
+    disp('Optimisation is finished !')
 end
 
