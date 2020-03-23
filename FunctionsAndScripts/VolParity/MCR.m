@@ -1,4 +1,4 @@
-function [MargConRisk] = MCR(Weights,Returns,PortfolioVol,LengthSignal,LengthVol,LengthMonth)
+function [MargConRisk,MargConRiskScaled] = MCR(Weights,Returns,PortfolioVol,LengthSignal,LengthVol,LengthMonth)
 %MCR Computes the marginal contribution to risk of an asset
 
 %   INPUT: 
@@ -9,9 +9,13 @@ function [MargConRisk] = MCR(Weights,Returns,PortfolioVol,LengthSignal,LengthVol
 %   OUTPUT:
 % MargConRisk : Matrix of marginal contribution to risk
 
+%Setting Parameters
 asset = size(Returns,2);
 position = 1;
+
+%Pre-allocating the size of the output
 MargConRisk = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),asset);
+MargConRiskScaled = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),asset);
 
 %Loop computing the leverage at each month
 for i = LengthSignal+1:LengthMonth:length(Returns)
@@ -37,9 +41,11 @@ for i = LengthSignal+1:LengthMonth:length(Returns)
     
     end
     
-    %total = sum(MargConRisk(position,:));
-    %MargConRisk(position,:) =  MargConRisk(position,:)*100/total;
-    
+    %Rescaled Magrinal contribution
+        total = sum(MargConRisk(position,:),2);
+        MargConRiskScaled(position,:) = MargConRisk(position,:).*100./total;
+   
+    %Going over the next rebalancing
     position = position + 1;
 
 end 

@@ -85,7 +85,7 @@ disp('Optimisation is starting !')
         fun = @(x)sum(log(abs(x))); %Function going over the available assezs (index == 1)
         
         % Finding the LengthVol days covariance matrix
-        CovMat = cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
+        CovMat = 252*cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
         
         options = optimoptions('fmincon','Display','off');
         

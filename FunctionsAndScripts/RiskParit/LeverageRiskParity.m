@@ -1,4 +1,4 @@
-function [Leverage,VolPortfolio] = Leverage(Weights,Returns,TargetVol,Signal,LengthSignal,LengthVol,LengthMonth)
+function [Leverage,VolPortfolio] = LeverageRiskParity(Weights,Returns,TargetVol,LengthSignal,LengthVol,LengthMonth)
 %Leverage Compute the risk of the portfolio and Leverage to took
 %   Detailed explanation goes here
 
@@ -15,9 +15,6 @@ Leverage = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),1);
 VolPortfolio = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),1);
 position = 1;
 
-%Computing Net Weights 
-Weights = Weights.*Signal;
-
 %Loop computing the leverage at each month
 for i = LengthSignal+1:LengthMonth:length(Returns)
     
@@ -25,10 +22,10 @@ for i = LengthSignal+1:LengthMonth:length(Returns)
     index = Weights(position,:)~=0;
     
     %Var/Covar matrix of available assets
-    matrix = cov(Returns(i-LengthVol+1:i,index==1));
+    matrix = 252*cov(Returns(i-LengthVol+1:i,index==1));
     
     %finding the risk of portfolio
-    VolPort =  sqrt(Weights(position,index==1)*252*matrix*Weights(position,index==1)');
+    VolPort =  sqrt(Weights(position,index==1)*matrix*Weights(position,index==1)');
     
     % Computing the leverage
     Leverage(position) = TargetVol/VolPort; 
