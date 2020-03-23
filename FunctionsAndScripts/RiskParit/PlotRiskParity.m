@@ -22,9 +22,9 @@ WeightsClassesRiskPar = zeros(length(RiskPar),5);
 for i = 1:length(WeightsClassesRiskPar)
     WeightsClassesRiskPar(i,1) = sum(GrossRiskPar(i,1:7));
      WeightsClassesRiskPar(i,2) = sum(GrossRiskPar(i,8:11)) ;
-      WeightsClassesRiskPar(i,3) = sum(GrossRiskPar(i,12:21)) ;
-       WeightsClassesRiskPar(i,4) = sum(GrossRiskPar(i,22:28)) ;
-        WeightsClassesRiskPar(i,5) = sum(GrossRiskPar(i,29:35)) ;
+     WeightsClassesRiskPar(i,3) = sum(GrossRiskPar(i,12:21)) ;
+      WeightsClassesRiskPar(i,4) = sum(GrossRiskPar(i,22:28)) ;
+       WeightsClassesRiskPar(i,5) = sum(GrossRiskPar(i,29:35)) ;
 end
 
 
@@ -45,11 +45,11 @@ print(f,'Output/Plot_RiskParity/RepartitionOfWeights', '-dpng', '-r300')
 MCRClasses = zeros(length(Margin),5);
 
 for i = 1:length(MCRClasses)
-    MCRClasses(i,1) = sum(MarginRiskParity(i,1:7)) ;
-     MCRClasses(i,2) = sum(MarginRiskParity(i,8:11)) ;
-      MCRClasses(i,3) = sum(MarginRiskParity(i,12:21)) ;
-       MCRClasses(i,4) = sum(MarginRiskParity(i,22:28)) ;
-        MCRClasses(i,5) = sum(MarginRiskParity(i,29:35)) ;
+   MCRClasses(i,1) = sum(MarginRiskParity(i,1:7)) ;
+    MCRClasses(i,2) = sum(MarginRiskParity(i,8:11)) ;
+     MCRClasses(i,3) = sum(MarginRiskParity(i,12:21)) ;
+      MCRClasses(i,4) = sum(MarginRiskParity(i,22:28)) ;
+       MCRClasses(i,5) = sum(MarginRiskParity(i,29:35)) ;
 end
 
 f = figure('visible','off');

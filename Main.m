@@ -10,7 +10,7 @@ close all
 clc
 
 %Path of the functions and scripts
-addpath(genpath('C:\Users\Benjamin\OneDrive\1. HEC\Master\MScF 4.2\5. QARM\2020\QARM_Project\FunctionsAndScripts'))
+addpath(genpath('C:\Users\Benjamin\OneDrive\Documents\GitHub\ASSET_PROJECT\FunctionsAndScripts'))
 
 %Path of KevinSheperd ToolBox
 addpath(genpath('C:\Users\Benjamin\OneDrive\1. HEC\Master\MScF 4.2\EMF\2020\Homeworks\KevinSheperdToolBox'))
@@ -21,7 +21,7 @@ addpath(genpath('C:\Users\Benjamin\OneDrive\1. HEC\Master\MScF 4.2\EMF\2020\Home
 DataImport; 
 
 % Setting up the value that we will use throughout the script
-LengthSignal = 252; % Number of days for the signal 
+LengthSignal = 126; % Number of days for the signal 
 LengthMonth = 21; % Avg. Number of days in a month
 LengthVol = 60; % Number of days to compute the volatility
 targetVol = 0.10; %Setting the target Volatility
@@ -40,7 +40,8 @@ Date;
 %% Testing the Auto-correlation of the data 
 
 %Apply LjungBoxTest
-ApplyLjungBox;
+AutoCorr_Test = ApplyLjungBox(returns,asset,firstData);
+AutoCorr_Monthly = ApplyLjungBox(MonReturn,asset,firstData);
 
 %% Volatility Parity
 
@@ -51,7 +52,7 @@ WeightsVolParity = VolParity(returns,firstData,LengthSignal,LengthVol,LengthMont
 Signal = SignalComputing(returns,firstData,LengthSignal,LengthMonth); %Computing all the signals 
 
 % Leverage and portfolio Volatility
-[leverage,PortfolioVol] = Leverage(WeightsVolParity,returns,targetVol,LengthSignal,LengthVol,LengthMonth); %Finding a vector of leverage, each period.
+[leverage,PortfolioVol] = Leverage(WeightsVolParity,returns,targetVol,Signal,LengthSignal,LengthVol,LengthMonth); %Finding a vector of leverage, each period.
 
 % Finding the returns of the strategy 
 MonReturn = MonthlyReturns(returns,LengthSignal,LengthMonth); %Finding Monthly returns of the strategy
@@ -61,8 +62,8 @@ Retour = ReturnStrategy(WeightsVolParity,leverage,MonReturn,Signal); %Finding th
 ReturnLO = ReturnStrategyLONGONLY(WeightsVolParity,leverage,MonReturn);
 
 %Cumulative Return
-cumReturn = cumprod(Retour+1); %Computing the cumulative return
-cumReturnLO = cumprod(ReturnLO+1); %Computing the cumulative return
+cumReturn = cumprod((Retour+1)); %Computing the cumulative return
+cumReturnLO = cumprod((ReturnLO+1)); %Computing the cumulative return
 
 %Computing the marginal contribution to risk
 MarginContribRisk = MCR(WeightsVolParity,returns,PortfolioVol,LengthSignal,LengthVol,LengthMonth);
@@ -80,11 +81,10 @@ PlotVolParity;
 RiskPar = RiskParityOpti(Signal,WeightsVolParity,returns,targetVol,LengthSignal,LengthVol,LengthMonth);
 
 %Finding the leverage and the portfolio Volatility
-[LeverageRiskParity,PortfolioVolRiskPar] = Leverage(RiskPar,returns,targetVol,LengthSignal,LengthVol,LengthMonth); 
+[LeverageRiskParity,PortfolioVolRiskPar] = Leverage(RiskPar,returns,targetVol,Signal,LengthSignal,LengthVol,LengthMonth); 
 
 %Computing the return of the strategy 
 ReturnRiskParity = ReturnStrategyRiskPar(RiskPar,LeverageRiskParity,MonReturn);
-
 
 %Cumulative Return
 CumuReturnRiskPar = cumprod(1+ReturnRiskParity);

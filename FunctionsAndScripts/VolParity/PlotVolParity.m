@@ -3,11 +3,14 @@
 %Plot of the return
 f = figure('visible','off');
 plot(monthdate,Retour)
+title('Volatility Strategy Returns')
 print(f,'Output/Plot_VolParity/StrategyReturns', '-dpng', '-r300')
 
 %Plot of cumulative return 
 f = figure('visible','off');
 plot(monthdate,cumReturn,'r',monthdate,cumReturnLO,'b')
+title('Volatility parity Long-Short VS Long-Only')
+legend('Long-Short','Long-Only')
 print(f,'Output/Plot_VolParity/StrategyCumuReturns', '-dpng', '-r300')
 
 %Plot of the Repartition of weights
