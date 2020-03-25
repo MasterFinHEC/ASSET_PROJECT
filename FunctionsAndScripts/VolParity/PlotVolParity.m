@@ -2,17 +2,29 @@
 
 %% Plot of the return
 f = figure('visible','off');
-plot(monthdate,Retour)
+plot(monthdate,ReturnTFLS)
 title('Return of the Long-Short strategy')
 xlabel('Years')
 ylabel('Cumulative Returns (base = 100)')
 print(f,'Output/Plot_VolParity/StrategyReturns', '-dpng', '-r300')
+clear f
 
 %% Plot of cumulative return 
 f = figure('visible','off');
-plot(monthdate,cumReturn,'r',monthdate,cumReturnLO,'b')
+plot(monthdate,cumReturnTFLS,'r',monthdate,cumReturnTFLO,'b')
 title('Long-Short VS. Long-Only Strategy')
+legend('Long-Short','Long-Only','Location','Best')
 print(f,'Output/Plot_VolParity/StrategyCumuReturns', '-dpng', '-r300')
+clear f
+
+%% Plot of cumulative Return (2nd Way)
+
+f = figure('visible','off');
+plot(monthdate(3:end),CumReturnLSTFB,'r',monthdate(3:end),cumReturnTFLO(3:end),'b')
+title('Long-Short VS. Long-Only Strategy - Baltas Volatily')
+legend('Long-Short','Long-Only','Location','Best')
+print(f,'Output/Plot_VolParity/StrategyCumuReturns2ndWay', '-dpng', '-r300')
+clear f
 
 %% Plot of the Repartition of weights
 WeightsClasses = zeros(length(WeightsVolParity),5);
@@ -33,7 +45,7 @@ xlabel('Years')
 ylabel('Weights')
 ylim([0 1])
 print(f,'Output/Plot_VolParity/RepartitionWeights', '-dpng', '-r300')
-
+clear f
 
 %% Plot of the Repartition of MCR
 MCRClasses = zeros(length(MarginConRiskScaled),5);
@@ -57,3 +69,4 @@ xlabel('Years')
 ylabel('Weights')
 ylim([-10 110])
 print(f,'Output/Plot_VolParity/RepartitionMCR', '-dpng', '-r300')
+clear f

@@ -1,4 +1,4 @@
-function [WeightsOpti] = RiskParityOpti(Signal,Weights,Returns,Target,LengthSignal,LengthVol,LengthMonth)
+function [WeightsOpti] = RiskParityOptiBaltas(Signal,Weights,Returns,Target,LengthSignal,LengthVol,LengthMonth)
 %Optimisation of the Risk parity Weighting Scheme
 
 %   This function take the following Inputs:
@@ -37,12 +37,11 @@ NetWeights = Signal.*Weights; % Long/short weights of VolParity
 %Setting the size of the output. 
 WeightsOpti = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),asset); %Size of the output 
 
-%Setting the unused parameters of the optimisation (matlab obligates it)
-A = []; %No linear constraint
-b = []; %No linear constraint
-
 %Disabling useless Warnings during optimisation
 warning ( 'off' , 'MATLAB:nearlySingularMatrix')
+
+% Setting options
+options = optimoptions('fmincon','Display','off');
 
 %Setting a position index allowing to move month by month on the matrix
 position = 1; %Position Index
@@ -55,7 +54,7 @@ position = 1; %Position Index
 % *************************************
 disp('Optimisation is starting !')
 
-    for i = LengthSignal+1:LengthMonth:length(Returns) 
+    for i = LengthSignal+1:LengthMonth:(length(Returns)-LengthVol)
         
         if position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)/10,0)
             disp('10% Done')
@@ -75,28 +74,47 @@ disp('Optimisation is starting !')
                                          % to check wheter the assets are
                                          % available from LengthSignal days from now
                                          % (Already done).
-       
                                          
+                                     
         % Setting the objective function (anonyme function)
         fun = @(x)sum(log(abs(x))); %Function going over the available assezs (index == 1)
         
-        % Finding the LengthVol days covariance matrix
-        CovMat = 252*cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
         
-        % Setting optimisation bounds on weights ->  can take leverage on an
-        % asset
-        lb = ones(1,length(CovMat))*-1; 
-        ub = ones(1,length(CovMat))*1; 
+        % No Bounds on the weights
+        lb = [];
+        ub = [];
         
-        % Setting linear constraint (Sum of weights = 100%)
-        Aeq = ones(1,length(CovMat)); 
-        beq = 1; 
+        % No linear inequality constraint
+        A = [];
+        b = [];
         
-        % Setting options
-        options = optimoptions('fmincon','Display','off');
+        % No linear equality constraint
+        Aeq = [];
+        beq = [];
+        
+        % ********************************
+        % Computing the vector that will go in the vol. constraint.
+        
+        %Pre-allocating a matrix of returns 
+        WeightedReturns = zeros(LengthVol,1); 
+        
+        % Positions of the available assets 
+        indexAvailable = find(index==1);
+    
+            for j = 1:round(LengthVol/LengthMonth,0) % Typically = 3 for vol 63, month 21
+                for k = 1:sum(index)
+                            WeightedReturns((j-1)*LengthMonth+1:(j-1)*...
+                            LengthMonth+LengthMonth,k) ...
+                            = Returns(i+(j-1)*LengthMonth:...
+                             i+(j-1)*LengthMonth+LengthMonth-1,indexAvailable(k));
+                end
+            end
         
         % Optimizing the month's weights 
-         WeightsOpti(position,index==1) = fmincon(@(x) fun(x),NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,@(x) VolConstraint(x,Target,CovMat),options);
+         WeightsOpti(position,index==1) = fmincon(@(x) fun(x), ...
+             NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,...
+             @(x) VolConstraintBaltas(x,Target,i,Weights,Returns,LengthMonth,...
+             LengthVol,position),options);
         
         %Rescaling Weights
         SumWeights = 0; 
@@ -117,4 +135,5 @@ disp('Optimisation is starting !')
     
     disp('Optimisation is finished !')
 end
+
 

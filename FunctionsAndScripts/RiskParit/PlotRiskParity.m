@@ -7,12 +7,23 @@ title('Return of the Long-Short strategy')
 xlabel('Years')
 ylabel('Cumulative Returns (base = 100)')
 print(f,'Output/Plot_RiskParity/StrategyReturns', '-dpng', '-r300')
+clear f
 
 %% Plot of cumulative return 
 f = figure('visible','off');
-plot(monthdate,CumuReturnRiskPar)
-title('Long-Short VS. Long-Only Strategy')
+plot(monthdate,CumuReturnRiskPar,'b',monthdate,cumReturnTFLS,'r')
+title('Volatility Parity vs Risk Parity Long-Short Strategy')
+legend('Risk Parity','Volatility Parity','location','best')
 print(f,'Output/Plot_RiskParity/StrategyCumuReturns', '-dpng', '-r300')
+clear f
+
+%% Plot of cumulative return Post Crisis
+f = figure('visible','off');
+plot(monthdate(228:290),CumuReturnRiskPar(228:290),'b',monthdate(228:290),cumReturnTFLS(228:290),'r')
+title('Post Crisis - TFVP vs TFRP (2009-2013)')
+legend('Risk Parity','Volatility Parity','location','best')
+print(f,'Output/Plot_RiskParity/PostCrisisStrategyCumuReturns', '-dpng', '-r300')
+clear f
 
 %% Plot of the Repartition of weights
 GrossRiskPar = abs(RiskPar);
@@ -43,7 +54,7 @@ xlabel('Years')
 ylabel('Weights')
 ylim([0 100])
 print(f,'Output/Plot_RiskParity/RepartitionOfWeights', '-dpng', '-r300')
-
+clear f
 
 %% Plot of the Repartition of MCR
 MCRClasses = zeros(length(MargConRiskScaledParity),5);
@@ -67,3 +78,4 @@ xlabel('Years')
 ylabel('Weights')
 ylim([-10 110])
 print(f,'Output/Plot_RiskParity/RepartitionOfMCR', '-dpng', '-r300')
+clear f

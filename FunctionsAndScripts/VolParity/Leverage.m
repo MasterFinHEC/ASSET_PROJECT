@@ -8,26 +8,26 @@ function [Leverage,VolPortfolio] = Leverage(Weights,Returns,TargetVol,Signal,Len
 % TargetVol : The target volatilty of the position
 
 % OUTPUT : 
-%Leverage : A vector of leverage for each month
+% Leverage : A vector of leverage for each month
 
-%Matrix to store the leverage 
+% Matrix to store the leverage 
 Leverage = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),1);
 VolPortfolio = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),1);
 position = 1;
 
-%Computing Net Weights 
+% Computing Net Weights 
 Weights = Weights.*Signal;
 
-%Loop computing the leverage at each month
+% Loop computing the leverage at each month
 for i = LengthSignal+1:LengthMonth:length(Returns)
     
-    %Index of available assets at time i
+    % Index of available assets at time i
     index = Weights(position,:)~=0;
     
-    %Var/Covar matrix of available assets
+    % Var/Covar matrix of available assets
     matrix = cov(Returns(i-LengthVol+1:i,index==1));
     
-    %finding the risk of portfolio
+    % Finding the risk of portfolio
     VolPort =  sqrt(Weights(position,index==1)*252*matrix*Weights(position,index==1)');
     
     % Computing the leverage
@@ -36,6 +36,7 @@ for i = LengthSignal+1:LengthMonth:length(Returns)
     % Having the Portfolio Vol in a vector
     VolPortfolio(position) = VolPort;
     
+    % Going to the next rebalancing (i+MonthDate)
 position = position + 1;  
 
 end 

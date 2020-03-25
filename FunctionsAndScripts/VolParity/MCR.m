@@ -31,20 +31,20 @@ for i = LengthSignal+1:LengthMonth:length(Returns)
     indexAvailable = find(index == 1);
 
    
-        %Loop computing the MCR of each available asset for the time i
+    %Loop computing the MCR of each available asset for the time i
     for j = 1:length(indexAvailable)
        
-        count = sum(Weights(position,indexAvailable(:)).*matrix(j,:))-Weights(position,indexAvailable(j))*matrix(j,j);
+        count = sum(Weights(position,indexAvailable(:)).*matrix(j,:))- ...
+                    Weights(position,indexAvailable(j))*matrix(j,j);
         
-        up = (Weights(position,indexAvailable(j))^2)*matrix(j,j) + count; %Intermediate Variable 
+        up = Weights(position,indexAvailable(j))*matrix(j,j) + count; %Intermediate Variable 
         MargConRisk(position,indexAvailable(j)) = up/PortfolioVol(position);  %Formula
-    
+        MargConRiskScaled(position,indexAvailable(j)) = MargConRisk(position,indexAvailable(j)) ...
+                                                        *Weights(position,indexAvailable(j))/PortfolioVol(position);
     end
-    
-    %Rescaled Magrinal contribution
-        total = sum(MargConRisk(position,:),2);
-        MargConRiskScaled(position,:) = MargConRisk(position,:).*100./total;
    
+  
+   MargConRiskScaled(position,:) = MargConRiskScaled(position,:).*100./sum(MargConRiskScaled(position,:));
     %Going over the next rebalancing
     position = position + 1;
 
