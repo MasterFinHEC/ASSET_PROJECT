@@ -1,4 +1,4 @@
-function [MargConRisk,MargConRiskScaled] = MCR(Weights,Returns,PortfolioVol,LengthSignal,LengthVol,LengthMonth)
+function [MargConRisk,MargConRiskScaled] = MCRonClass(Weights,Returns,PortfolioVol,LengthSignal,LengthVol,LengthMonth)
 %MCR Computes the marginal contribution to risk of an asset
 
 %   INPUT: 
@@ -14,11 +14,11 @@ asset = size(Returns,2);
 position = 1;
 
 %Pre-allocating the size of the output
-MargConRisk = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),asset);
-MargConRiskScaled = zeros(round((length(Returns)-LengthSignal)/LengthMonth,0),asset);
+MargConRisk = zeros(length(Weights),asset);
+MargConRiskScaled = zeros(length(Weights),asset);
 
 %Loop computing the leverage at each month
-for i = LengthSignal+1:LengthMonth:length(Returns)
+for i = 3:length(Weights)-1
     
     %Absolute value of weights
     Weights = abs(Weights);
@@ -27,7 +27,7 @@ for i = LengthSignal+1:LengthMonth:length(Returns)
     index = Weights(position,:)~=0;
     
     %Var/Covar matrix of available assets
-    matrix = cov(Returns(i-LengthVol+1:i,index==1));
+    matrix = cov(Returns(i-2:i,index==1));
     
     %Available assets -> index of the available assets (to store in the
     %right place of the matrix)

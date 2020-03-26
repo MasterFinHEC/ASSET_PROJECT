@@ -69,10 +69,11 @@ cumReturnTFLO = cumprod((ReturnTFLO+1)).*100; %Computing the cumulative return
 
 %Computing the marginal contribution to risk
 [MarginContribRisk,MarginConRiskScaled] = MCR(WeightsVolParity,returns,...
-                                              targetVol,LengthSignal,...
+                                              PortfolioVol,LengthSignal,...
                                               LengthVol,LengthMonth);
-
-
+                                          
+                                          
+                                          
 % 2. This second part compute the volatility using the 3 previous weights
 % applied on the three previous month of returns
 
@@ -93,6 +94,27 @@ CumReturnLSTFB = cumprod((ReturnBaltasStrategy+1)).*100;
 
 %Ploting the results
 PlotVolParity;
+
+%Computing the model with Fees.
+%1. Computing the fees
+    BpFees = [0.1, 0.3];
+    Fees = FeesComputation(BpFees,WeightsVolParity);
+    SumFees = sum(Fees,2);
+
+%2. Computing the returns  
+
+% Alexeev and Souane Volatiltiy
+CorrectedReturns = MonReturn-Fees(2:end,:);
+ReturnTFLS_Fees = ReturnStrategy(WeightsVolParity,leverage,CorrectedReturns,Signal);
+cumReturnTFLS_Fees = cumprod((1+ReturnTFLS_Fees)).*100;
+
+% Baltas Volatility 
+ReturnTFLSB_Fees = ReturnBaltas(LeverageBaltasVolPar,CorrectedReturns,Signal,WeightsVolParity);
+cumReturnTFLSB_Fees = cumprod((1+ReturnTFLSB_Fees)).*100;
+
+%Computing the statistics of the portfolio
+[AverageTurnoverVolParity,TurnoverVolParity] = turnover(MonReturn,WeightsVolParity);
+
 %% Risk parity
 
 %Finding the optimal weights through FminCon optimisation
@@ -111,19 +133,51 @@ ReturnRiskParity = ReturnStrategyRiskPar(RiskPar,LeverageRiskPar,MonReturn);
 CumuReturnRiskPar = cumprod(1+ReturnRiskParity).*100;
 
 %Marginal Contribution to risk
-[MarginRisk,MargConRiskScaledParity] = MCR(RiskPar,returns,PortfolioVol,...
+[MarginRisk,MargConRiskScaledParity] = MCR(RiskPar,returns,PortfolioVolRiskPar,...
                                            LengthSignal,LengthVol,LengthMonth);
 
-                                       
-% 2. Computing with the second type of volatility
-%RiskParityWeightsBaltas = RiskParityOptiBaltas(Signal,WeightsVolParity,returns,...
-                                               %targetVol,LengthSignal, ...
-                                               %LengthVol,LengthMonth);
+% 2. This second part compute the volatility using the 3 previous weights
+% applied on the three previous month of returns
 
+% The computations of the signals and the weights don't change, we just
+% need to be careful with the indexes. 
+
+% a. Leverage Computations -> We will create another functions since it
+%    doesn't match well with the other. 
+
+LeverageBaltasRiskPar = LeverageBaltasRiskParity(returns,LengthSignal,LengthMonth,...
+                            LengthVol,RiskPar,targetVol);
+
+% b. Computing the return of the strategy. 
+ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LeverageBaltasRiskPar,MonReturn,WeightsVolParity);
+
+% Computing Cumulative Returns
+CumReturnLSTFRiskParity = cumprod((ReturnBaltasStrategyRiskParity+1)).*100;
+ 
+%Computing the model with Fees.
+%1. Computing the fees
+    BpFees = [0.01, 0.03];
+    Fees_RiskPar = FeesComputation(BpFees,RiskPar);
+    SumFees_RiskPar = sum(Fees_RiskPar,2);
+
+%2. Computing the returns  
+
+% Alexeev and Souane Volatiltiy
+CorrectedReturns_RiskPar = MonReturn-Fees_RiskPar(2:end,:);
+ReturnTFLSRP_Fees = ReturnStrategyRiskPar(RiskPar,LeverageRiskPar,CorrectedReturns_RiskPar);
+cumReturnTFLSRP_Fees = cumprod((1+ReturnTFLSRP_Fees)).*100;
+
+% Baltas Volatility 
+ReturnTFLSRPB_Fees = ReturnBaltasRiskPar(LeverageBaltasRiskPar,CorrectedReturns_RiskPar,RiskPar);
+cumReturnTFLSRPB_Fees = cumprod((1+ReturnTFLSRPB_Fees)).*100;
 
 %Plotting the results
 PlotRiskParity;
 GeneralPlot;
+
+%Statistics of portfolio
+%Computing the statistics of the portfolio
+[AverageTurnoverRiskParity,TurnoverRiskParity] = turnover(MonReturn,RiskPar);
 
 %Clearing Variables
 clear i j total Available b f;

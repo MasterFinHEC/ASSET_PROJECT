@@ -25,6 +25,24 @@ legend('Risk Parity','Volatility Parity','location','best')
 print(f,'Output/Plot_RiskParity/PostCrisisStrategyCumuReturns', '-dpng', '-r300')
 clear f
 
+%% Plot of cumulative return Vol vs risk baltas way
+
+f = figure('visible','off');
+plot(monthdate(3:end),CumReturnLSTFB,'b',monthdate(3:end),CumReturnLSTFRiskParity,'r')
+title('Volatility Parity vs Risk Parity Long-Short Strategy Baltas Way')
+legend('Volatility Parity','Risk Parity','location','best')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns_Baltas_Comparison', '-dpng', '-r300')
+clear f
+
+%% Plot of cumulative riskparity fee vs no fee baltas way
+
+f = figure('visible','off');
+plot(monthdate(3:end),cumReturnTFLSRPB_Fees,'b',monthdate(3:end),CumReturnLSTFRiskParity,'r')
+title('Volatility Parity vs Risk Parity Long-Short Strategy Baltas Way')
+legend('With Fees','Without Fees','location','best')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns_Baltas_Comparison_FEES', '-dpng', '-r300')
+clear f
+
 %% Plot of the Repartition of weights
 GrossRiskPar = abs(RiskPar);
 for i = 1:length(GrossRiskPar)

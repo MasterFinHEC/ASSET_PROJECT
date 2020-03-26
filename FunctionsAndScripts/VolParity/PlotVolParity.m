@@ -17,6 +17,22 @@ legend('Long-Short','Long-Only','Location','Best')
 print(f,'Output/Plot_VolParity/StrategyCumuReturns', '-dpng', '-r300')
 clear f
 
+%% Plot of cumulative return with and withoutFees
+f = figure('visible','off');
+plot(monthdate,cumReturnTFLS,'r',monthdate,cumReturnTFLS_Fees,'b')
+title('Comparison with Fees')
+legend('Without Fees','With Fees','Location','Best')
+print(f,'Output/Plot_VolParity/Fees', '-dpng', '-r300')
+clear f
+
+%% Plot of cumulative return with and withoutFees - Baltas Ways
+f = figure('visible','off');
+plot(monthdate(3:end),CumReturnLSTFB,'r',monthdate(3:end),cumReturnTFLSB_Fees,'b')
+title('Comparison with Fees')
+legend('Without Fees','With Fees','Location','Best')
+print(f,'Output/Plot_VolParity/Fees_Baltas', '-dpng', '-r300')
+clear f
+
 %% Plot of cumulative Return (2nd Way)
 
 f = figure('visible','off');

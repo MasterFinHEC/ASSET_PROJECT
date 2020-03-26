@@ -24,31 +24,37 @@ MatColor = [0.6350,0.0780,0.1840;0.6350,0.0780,0.1840;0.6350,0.0780,0.1840;0.635
     ; 0.8500,0.3250,0.0980;0.8500,0.3250,0.0980;0.8500,0.3250,0.0980 ...
     ;0,0.4470,0.7410;0,0.4470,0.7410;0,0.4470,0.7410;0,0.4470,0.7410;0,0.4470,0.7410;0,0.4470,0.7410];
 
-% Bar Plot of the Variance
+%% Bar Plot of the Variance
 f = figure('visible','off');
 b = bar(names,Var);
 b.FaceColor = 'flat';
 b.CData(:) = MatColor;
-print(f,'Output/Plots/AssetsStandardError', '-dpng', '-r300')
+title('Assets Volatility')
+xlabel('Asset')
+ylabel('Volatility')
+print(f,'Output/Plots/AssetsStandardError', '-dpng', '-r1000')
 
-% Bar Plot of the Variance
+%% All returns
 f = figure('visible','off');
-plot(cumprod(returns+1))
-print(f,'Output/Plots/Returns', '-dpng', '-r300')
+plot(date(2:end),cumprod(returns+1))
+title('Cumulative returns of all assets')
+xlabel('Years')
+ylabel('Cumulative returns (base = 1)')
+print(f,'Output/Plots/Returns', '-dpng', '-r1000')
 
-% Plot availability of assets
+%% Plot availability of assets
 availablity = isfinite(price); 
 f = figure('visible','off');
-area(date, availablity)
+area(date, availablity);
 colormap winter
 title('Availability of assets')
 xlabel('Years')
 ylabel('Number of available assets')
 ylim([0 35])
-print(f,'Output/Plots/Availability', '-dpng', '-r300')
+print(f,'Output/Plots/Availability', '-dpng', '-r1000')
 clear availablity
 
-% Plot of the correlations 
+%% Plot of the correlations 
 
 %Class Construction 
 Energy = returns(:,1:7);
@@ -65,47 +71,53 @@ for i = 90:length(returns)
     value = Energy(i-89:i,index==1);
     IntraCorr(a,1) = mean(tril(corrcoef(value),-1),'all');
 end 
-IntraCorr(:,1) = smooth(IntraCorr(:,1));
+IntraCorr(:,1) = abs(IntraCorr(:,1));
 for i = 90:length(returns)
     index = FixedIncome(i,:) ~= 0;
     a = i-89;
     value = FixedIncome(i-89:i,index==1);
     IntraCorr(a,2) = mean(tril(corrcoef(value),-1),'all');
 end 
-IntraCorr(:,2) = smooth(IntraCorr(:,2));
+IntraCorr(:,2) = abs(IntraCorr(:,2));
 for i = 90:length(returns)
     index = Commodities(i,:) ~= 0;
     a = i-89;
     value = Commodities(i-89:i,index==1);
     IntraCorr(a,3) = mean(tril(corrcoef(value),-1),'all');
 end 
-IntraCorr(:,3) = smooth(IntraCorr(:,3));
+IntraCorr(:,3) = abs(IntraCorr(:,3));
 for i = 90:length(returns)
     index = Equity(i,:) ~= 0;
     a = i-89;
     value = Equity(i-89:i,index==1);
     IntraCorr(a,4) = mean(tril(corrcoef(value),-1),'all');
 end 
-IntraCorr(:,4) = smooth(IntraCorr(:,4));
+IntraCorr(:,4) = abs(IntraCorr(:,4));
 for i = 90:length(returns)
     index = Currency(i,:) ~= 0;
     a = i-89;
     value = Currency(i-89:i,index==1);
     IntraCorr(a,5) = mean(tril(corrcoef(value),-1),'all');
 end  
-IntraCorr(:,5) = smooth(IntraCorr(:,5));
+IntraCorr(:,5) = abs(IntraCorr(:,5));
+ind = find(isnan(IntraCorr));
+IntraCorr(ind) = arrayfun(@(x) nanmean(IntraCorr(x-5:x-1)), ind);
 
 % All Intracorr
 f = figure('visible','off');
-plot(date(91:end),IntraCorr)
+bar(date(91:end),IntraCorr(:,[1,3,4,5]))
+title('Average Intra-Class Correlation - 90 days rolling window')
+legend('Energy','Commodities','Equity','Currency')
+ylabel('Correlation coefficient')
+xlabel('Years')
 x0=10;
 y0=10;
 width=1000;
 height=400;
 set(gcf,'position',[x0,y0,width,height])
-print(f,'Output/Plots/AllCorr', '-dpng', '-r300')
+print(f,'Output/Plots/AllCorr', '-dpng', '-r1000')
 
-% Rolling Window IntraClass Pairwise Correlation
+% Rolling Window InterclassClass Pairwise Correlation
 EnergyIntra = mean(Energy,2);
 FixedIncomeIntra = mean(FixedIncome,2);
 CommoditiesIntra = mean(Commodities,2);
@@ -113,21 +125,44 @@ EquityIntra = mean(Equity,2);
 CurrencyIntra = mean(Currency,2);
 InterCorr = [EnergyIntra, FixedIncomeIntra, CommoditiesIntra, EquityIntra, CurrencyIntra];
 
+
+InterCorrAll = zeros(7855,1);
+for i = 90:length(returns)
+    index = InterCorr(i,:) ~= 0;
+    a = i-89;
+    value = InterCorr(i-89:i,index==1);
+    InterCorrAll(a,1) = abs(mean(tril(corrcoef(value),-1),'all'));
+end
+InterCorrAll = smooth(InterCorrAll);
+
+% General Inter correlation
 f = figure('visible','off');
-plot(date(91:end),IntraCorr)
+bar(date(91:end),InterCorrAll)
+title('Average 90 days rolling window Inter-class correlation between all asset class')
+legend('Average Correlation')
+xlabel('Years')
+ylabel('Correlation coefficient')
 x0=10;
 y0=10;
 width=1000;
 height=400;
 set(gcf,'position',[x0,y0,width,height])
-print(f,'Output/Plots/EnergyCorr', '-dpng', '-r300')
+print(f,'Output/Plots/InterCorr', '-dpng', '-r1000')
 
+%% Plot of turnover
 
+%Through time
+f = figure('visible','off');
+plot(monthdate,TurnoverVolParity(2:end))
+title('Monthly Turnover of the Long-Short strategy')
+xlabel('Years')
+ylabel('Turnover in %')
+print(f,'Output/Plots/Turnover', '-dpng', '-r1000')
 
-
-
-
-
-
-
-
+%Histogram
+f = figure('visible','off');
+histogram(TurnoverVolParity(2:end))
+title('Monthly Turnover Distribution')
+xlabel('Turnover in %')
+ylabel('Frequency')
+print(f,'Output/Plots/TurnoverHistogram', '-dpng', '-r1000')

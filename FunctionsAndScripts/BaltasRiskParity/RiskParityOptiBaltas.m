@@ -65,7 +65,7 @@ disp('Optimisation is starting !')
         elseif position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)*3/4,0)
             disp('75% Done')
         else %do nothing
-        end% Just print the position to know where we are withing the optimisation
+        end% Just print the position to know where we are within the optimisation
         
         % Finding the available asset to perform logical indexing on the
         % optimization
@@ -91,24 +91,6 @@ disp('Optimisation is starting !')
         % No linear equality constraint
         Aeq = [];
         beq = [];
-        
-        % ********************************
-        % Computing the vector that will go in the vol. constraint.
-        
-        %Pre-allocating a matrix of returns 
-        WeightedReturns = zeros(LengthVol,1); 
-        
-        % Positions of the available assets 
-        indexAvailable = find(index==1);
-    
-            for j = 1:round(LengthVol/LengthMonth,0) % Typically = 3 for vol 63, month 21
-                for k = 1:sum(index)
-                            WeightedReturns((j-1)*LengthMonth+1:(j-1)*...
-                            LengthMonth+LengthMonth,k) ...
-                            = Returns(i+(j-1)*LengthMonth:...
-                             i+(j-1)*LengthMonth+LengthMonth-1,indexAvailable(k));
-                end
-            end
         
         % Optimizing the month's weights 
          WeightsOpti(position,index==1) = fmincon(@(x) fun(x), ...
