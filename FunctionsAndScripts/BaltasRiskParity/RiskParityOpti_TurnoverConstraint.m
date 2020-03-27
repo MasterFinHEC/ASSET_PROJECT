@@ -1,4 +1,4 @@
-function [WeightsOpti] = RiskParityOpti(Signal,Weights,Returns,Target,LengthSignal,LengthVol,LengthMonth)
+function [WeightsOpti] = RiskParityOpti_TurnoverConstraint(Signal,Weights,Returns,Target,LengthSignal,LengthVol,LengthMonth,MonReturn,TargetTurnover)
 %Optimisation of the Risk parity Weighting Scheme
 
 %   This function take the following Inputs:
@@ -91,12 +91,12 @@ disp('Optimisation is starting !')
         % Setting linear constraint (Sum of weights = 100%)
         Aeq = ones(1,length(CovMat)); 
         beq = 1; 
-    
+        
         % Setting options
         options = optimoptions('fmincon','Display','off');
         
         % Optimizing the month's weights 
-         WeightsOpti(position,index==1) = fmincon(@(x) fun(x),NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,@(x) VolConstraint(x,Target,CovMat),options);
+         WeightsOpti(position,index==1) = fmincon(@(x) fun(x),NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,@(x) VolAndTurnover(x,Target,CovMat,TargetTurnover,MonReturn),options);
         
         %Rescaling Weights
         SumWeights = 0; 

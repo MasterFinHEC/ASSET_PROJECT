@@ -14,33 +14,58 @@ f = figure('visible','off');
 plot(monthdate,CumuReturnRiskPar,'b',monthdate,cumReturnTFLS,'r')
 title('Volatility Parity vs Risk Parity Long-Short Strategy')
 legend('Risk Parity','Volatility Parity','location','best')
-print(f,'Output/Plot_RiskParity/StrategyCumuReturns', '-dpng', '-r300')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns', '-dpng', '-r1000')
+clear f
+
+%% Plot Comparaison both method
+f = figure('visible','off');
+plot(monthdate(3:end),CumuReturnRiskPar(3:end),'b',monthdate(3:end),CumReturnLSTFRiskParity,'r')
+title('Risk Parity Long-Short Strategy - Two Method')
+legend('Souane & Alexeev','Baltas','location','best')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns_BaltasVSus', '-dpng', '-r1000')
 clear f
 
 %% Plot of cumulative return Post Crisis
 f = figure('visible','off');
 plot(monthdate(228:290),CumuReturnRiskPar(228:290),'b',monthdate(228:290),cumReturnTFLS(228:290),'r')
-title('Post Crisis - TFVP vs TFRP (2009-2013)')
+title('Post Crisis - Volatility vs Risk Parity')
 legend('Risk Parity','Volatility Parity','location','best')
-print(f,'Output/Plot_RiskParity/PostCrisisStrategyCumuReturns', '-dpng', '-r300')
+print(f,'Output/Plot_RiskParity/PostCrisisStrategyCumuReturns', '-dpng', '-r1000')
+clear f
+
+%% Plot of cumulative return Post Crisis Baltas Way
+f = figure('visible','off');
+plot(monthdate(228:290),CumReturnLSTFB(228:290),'b',monthdate(228:290),CumReturnLSTFRiskParity(228:290),'r')
+title('Post Crisis - Volatility vs Risk Parity')
+legend('Risk Parity','Volatility Parity','location','best')
+print(f,'Output/Plot_RiskParity/PostCrisisStrategyCumuReturns_Baltas', '-dpng', '-r1000')
 clear f
 
 %% Plot of cumulative return Vol vs risk baltas way
 
 f = figure('visible','off');
 plot(monthdate(3:end),CumReturnLSTFB,'b',monthdate(3:end),CumReturnLSTFRiskParity,'r')
-title('Volatility Parity vs Risk Parity Long-Short Strategy Baltas Way')
+title('Volatility Parity vs Risk Parity Long-Short Strategy')
 legend('Volatility Parity','Risk Parity','location','best')
-print(f,'Output/Plot_RiskParity/StrategyCumuReturns_Baltas_Comparison', '-dpng', '-r300')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns_BaltasWay', '-dpng', '-r1000')
 clear f
 
 %% Plot of cumulative riskparity fee vs no fee baltas way
 
 f = figure('visible','off');
 plot(monthdate(3:end),cumReturnTFLSRPB_Fees,'b',monthdate(3:end),CumReturnLSTFRiskParity,'r')
-title('Volatility Parity vs Risk Parity Long-Short Strategy Baltas Way')
+title('Performance of strategy with/without fees')
 legend('With Fees','Without Fees','location','best')
-print(f,'Output/Plot_RiskParity/StrategyCumuReturns_Baltas_Comparison_FEES', '-dpng', '-r300')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturns_Baltas_Comparison_FEES', '-dpng', '-r1000')
+clear f
+
+%% Plot of cumulative riskparity fee vs no fee baltas way
+
+f = figure('visible','off');
+plot(monthdate(3:end),cumReturnTFLSRP_Fees(3:end),'b',monthdate(3:end),cumReturnTFLSRPB_Fees,'r')
+title('Performance of methods with fees')
+legend('Souane & Alexeev','Baltas','location','best')
+print(f,'Output/Plot_RiskParity/StrategyCumuReturnsFEES_BaltasVSus', '-dpng', '-r1000')
 clear f
 
 %% Plot of the Repartition of weights

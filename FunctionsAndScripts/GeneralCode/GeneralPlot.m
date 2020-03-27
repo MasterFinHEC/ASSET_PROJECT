@@ -56,53 +56,6 @@ clear availablity
 
 %% Plot of the correlations 
 
-%Class Construction 
-Energy = returns(:,1:7);
-FixedIncome = returns(:,8:11);
-Commodities = returns(:,12:21);
-Equity = returns(:,22:28);
-Currency = returns(:,29:35);
-
-% Rolling Window Interclass-pairwise Correlation
-IntraCorr = zeros(length(returns)-89,5);
-for i = 90:length(returns)
-    index = Energy(i,:) ~= 0;
-    a = i-89;
-    value = Energy(i-89:i,index==1);
-    IntraCorr(a,1) = mean(tril(corrcoef(value),-1),'all');
-end 
-IntraCorr(:,1) = abs(IntraCorr(:,1));
-for i = 90:length(returns)
-    index = FixedIncome(i,:) ~= 0;
-    a = i-89;
-    value = FixedIncome(i-89:i,index==1);
-    IntraCorr(a,2) = mean(tril(corrcoef(value),-1),'all');
-end 
-IntraCorr(:,2) = abs(IntraCorr(:,2));
-for i = 90:length(returns)
-    index = Commodities(i,:) ~= 0;
-    a = i-89;
-    value = Commodities(i-89:i,index==1);
-    IntraCorr(a,3) = mean(tril(corrcoef(value),-1),'all');
-end 
-IntraCorr(:,3) = abs(IntraCorr(:,3));
-for i = 90:length(returns)
-    index = Equity(i,:) ~= 0;
-    a = i-89;
-    value = Equity(i-89:i,index==1);
-    IntraCorr(a,4) = mean(tril(corrcoef(value),-1),'all');
-end 
-IntraCorr(:,4) = abs(IntraCorr(:,4));
-for i = 90:length(returns)
-    index = Currency(i,:) ~= 0;
-    a = i-89;
-    value = Currency(i-89:i,index==1);
-    IntraCorr(a,5) = mean(tril(corrcoef(value),-1),'all');
-end  
-IntraCorr(:,5) = abs(IntraCorr(:,5));
-ind = find(isnan(IntraCorr));
-IntraCorr(ind) = arrayfun(@(x) nanmean(IntraCorr(x-5:x-1)), ind);
-
 % All Intracorr
 f = figure('visible','off');
 bar(date(91:end),IntraCorr(:,[1,3,4,5]))
@@ -117,23 +70,6 @@ height=400;
 set(gcf,'position',[x0,y0,width,height])
 print(f,'Output/Plots/AllCorr', '-dpng', '-r1000')
 
-% Rolling Window InterclassClass Pairwise Correlation
-EnergyIntra = mean(Energy,2);
-FixedIncomeIntra = mean(FixedIncome,2);
-CommoditiesIntra = mean(Commodities,2);
-EquityIntra = mean(Equity,2);
-CurrencyIntra = mean(Currency,2);
-InterCorr = [EnergyIntra, FixedIncomeIntra, CommoditiesIntra, EquityIntra, CurrencyIntra];
-
-
-InterCorrAll = zeros(7855,1);
-for i = 90:length(returns)
-    index = InterCorr(i,:) ~= 0;
-    a = i-89;
-    value = InterCorr(i-89:i,index==1);
-    InterCorrAll(a,1) = abs(mean(tril(corrcoef(value),-1),'all'));
-end
-InterCorrAll = smooth(InterCorrAll);
 
 % General Inter correlation
 f = figure('visible','off');
@@ -166,3 +102,48 @@ title('Monthly Turnover Distribution')
 xlabel('Turnover in %')
 ylabel('Frequency')
 print(f,'Output/Plots/TurnoverHistogram', '-dpng', '-r1000')
+
+% Histogram of turnover of both strategy
+f = figure('visible','off');
+histogram(TurnoverVolParity)
+title('Monthly Turnover Distribution')
+xlabel('Turnover in %')
+ylabel('Frequency')
+hold on
+histogram(TurnoverRiskParity)
+legend('Volatility Parity', 'Risk Parity')
+print(f,'Output/Plots/TurnoverHistogram_BothDistribution', '-dpng', '-r1000')
+
+%Through time
+f = figure('visible','off');
+plot(monthdate,TurnoverRiskParity(2:end))
+title('Monthly Turnover of the Long-Short strategy (Risk Parity)')
+xlabel('Years')
+ylabel('Turnover in %')
+print(f,'Output/Plots/TurnoverRiskParity', '-dpng', '-r1000')
+
+%% Sharpe ratio
+f = figure('visible','off');
+t = tiledlayout(1,2);
+title(t,'Sharpe Ratios and correlation regime')
+ylabel(t,'Sharpe Ratio')
+x0=10;
+y0=10;
+width=1000;
+height=400;
+set(gcf,'position',[x0,y0,width,height])
+ax1 = nexttile;
+b = bar(ax1,SharpeMeanEvent_VolParity(1:3));
+title(ax1,'Volatility Parity')
+xticklabels(ax1,{'Low','Middle','High'})
+ylim(ax1,[0 2])
+b.FaceColor = 'flat';
+b.CData(:) = [0.9290 0.6940 0.1250;0.8500 0.3250 0.0980;0.6350 0.0780 0.1840];
+ax2 = nexttile;
+b = bar(ax2,SharpeMeanEvent_RiskParity(1:3));
+title(ax2,'Risk Parity')
+xticklabels(ax2,{'Low','Middle','High'})
+ylim(ax2,[0 2])
+b.FaceColor = 'flat';
+b.CData(:) = [0.9290 0.6940 0.1250;0.8500 0.3250 0.0980;0.6350 0.0780 0.1840];
+print(f,'Output/Plots/SharpeRatios_CorrelationEvent', '-dpng', '-r1000')

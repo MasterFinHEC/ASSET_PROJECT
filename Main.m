@@ -92,8 +92,6 @@ ReturnBaltasStrategy = ReturnBaltas(LeverageBaltasVolPar,MonReturn,Signal,Weight
 % Computing Cumulative Returns
 CumReturnLSTFB = cumprod((ReturnBaltasStrategy+1)).*100;
 
-%Ploting the results
-PlotVolParity;
 
 %Computing the model with Fees.
 %1. Computing the fees
@@ -112,8 +110,6 @@ cumReturnTFLS_Fees = cumprod((1+ReturnTFLS_Fees)).*100;
 ReturnTFLSB_Fees = ReturnBaltas(LeverageBaltasVolPar,CorrectedReturns,Signal,WeightsVolParity);
 cumReturnTFLSB_Fees = cumprod((1+ReturnTFLSB_Fees)).*100;
 
-%Computing the statistics of the portfolio
-[AverageTurnoverVolParity,TurnoverVolParity] = turnover(MonReturn,WeightsVolParity);
 
 %% Risk parity
 
@@ -149,7 +145,7 @@ LeverageBaltasRiskPar = LeverageBaltasRiskParity(returns,LengthSignal,LengthMont
                             LengthVol,RiskPar,targetVol);
 
 % b. Computing the return of the strategy. 
-ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LeverageBaltasRiskPar,MonReturn,WeightsVolParity);
+ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LeverageBaltasRiskPar,MonReturn,RiskPar);
 
 % Computing Cumulative Returns
 CumReturnLSTFRiskParity = cumprod((ReturnBaltasStrategyRiskParity+1)).*100;
@@ -171,13 +167,76 @@ cumReturnTFLSRP_Fees = cumprod((1+ReturnTFLSRP_Fees)).*100;
 ReturnTFLSRPB_Fees = ReturnBaltasRiskPar(LeverageBaltasRiskPar,CorrectedReturns_RiskPar,RiskPar);
 cumReturnTFLSRPB_Fees = cumprod((1+ReturnTFLSRPB_Fees)).*100;
 
-%Plotting the results
+
+%% Model Extension - Constraint on turnover
+
+disp('Computing the extension of the model with the constraint on turnover :')
+
+%Setting Up turnover Target
+TargetTurnover = 40;
+OptimalWeights_RiskPar_Constraint = RiskParityOpti_TurnoverConstraint(Signal,...
+    WeightsVolParity,returns,targetVol,LengthSignal,LengthVol,LengthMonth,...
+    MonReturn,TargetTurnover);
+
+% a. Leverage Computations 
+LeverageBaltasRiskPar_Constraint = LeverageBaltasRiskParity(returns,LengthSignal,LengthMonth,...
+                            LengthVol,OptimalWeights_RiskPar_Constraint,targetVol);
+
+% b. Computing the return of the strategy. 
+ReturnBaltasStrategyRiskParity_Constraint = ReturnBaltasRiskPar(LeverageBaltasRiskPar_Constraint,...
+    MonReturn,OptimalWeights_RiskPar_Constraint);
+
+% c. Computing Cumulative Returns
+CumReturnLSTFRiskParity_Constraint = cumprod((ReturnBaltasStrategyRiskParity_Constraint+1)).*100;
+
+% d. Computing Fees
+%1. Computing the fees
+    BpFees = [0.01, 0.03];
+    Fees_RiskParity_Constrained = FeesComputation(BpFees,OptimalWeights_RiskPar_Constraint);
+    SumFees_RiskParity_Constrained = sum(Fees_RiskParity_Constrained,2);
+    
+%2. Computing the returns
+CorrectedReturns_RiskParity_Constrained = MonReturn-Fees_RiskPar(2:end,:);
+ReturnConstrained_Fees = ReturnBaltasRiskPar(LeverageBaltasRiskPar_Constraint,...
+    CorrectedReturns_RiskParity_Constrained,OptimalWeights_RiskPar_Constraint);
+cumReturnConstrained_Fees = cumprod((1+ReturnConstrained_Fees)).*100;
+
+%% Statistics of Portfolios
+
+%Computing Inter and Intra Correlation
+Inter_Intra_Correlation;
+
+%Computing the turnovers of the strategies
+[AverageTurnoverRiskParity,TurnoverRiskParity] = turnover(MonReturn,RiskPar);
+[AverageTurnoverVolParity,TurnoverVolParity] = turnover(MonReturn,WeightsVolParity);
+
+%Computing the correlations events Sharpe ratios
+[SharpeMeanEvent_VolParity,Sharpe_VolParity,Count_VolParity] = CorrelationEvent(LengthSignal,LengthMonth,...
+                                        InterCorrAll,ReturnBaltasStrategy,0.01);
+[SharpeMeanEvent_RiskParity,Sharpe_RiskParity,Count_RiskParity] = CorrelationEvent(LengthSignal,LengthMonth,...
+                                        InterCorrAll,ReturnBaltasStrategyRiskParity,0.01);                                    
+
+                                    
+% Computing the total Sharpe Ratios
+SharpeRatio_VolPar = SharpeRatio(ReturnTFLS,0.01);
+SharpeRatio_VolParBaltas = SharpeRatio(ReturnBaltasStrategy,0.01);
+SharpeRatio_RiskPar = SharpeRatio(ReturnRiskParity,0.01);
+SharpeRatio_RiskParBaltas = SharpeRatio(ReturnBaltasStrategyRiskParity,0.01);
+SharpeRatio_LongOnly = SharpeRatio(ReturnTFLO,0.01);
+
+
+% Computing the Maximum DrawDowns
+MDD_VolParity = MDD(ReturnTFLS);
+MDD_VolParityBaltas = MDD(ReturnBaltasStrategy);
+MDD_RiskParity = MDD(ReturnRiskParity);
+MDD_RiskParityBaltas = MDD(ReturnBaltasStrategyRiskParity);
+MDD_VolParityLongOnly = MDD(ReturnTFLO);
+
+%Ploting the results
+PlotVolParity;
 PlotRiskParity;
 GeneralPlot;
-
-%Statistics of portfolio
-%Computing the statistics of the portfolio
-[AverageTurnoverRiskParity,TurnoverRiskParity] = turnover(MonReturn,RiskPar);
+Plot_ConstraintRiskParity;
 
 %Clearing Variables
 clear i j total Available b f;
