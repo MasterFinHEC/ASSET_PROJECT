@@ -151,6 +151,7 @@ ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LeverageBaltasRiskPar,MonRe
 CumReturnLSTFRiskParity = cumprod((ReturnBaltasStrategyRiskParity+1)).*100;
  
 %Computing the model with Fees.
+
 %1. Computing the fees
     BpFees = [0.01, 0.03];
     Fees_RiskPar = FeesComputation(BpFees,RiskPar);
@@ -200,6 +201,7 @@ CorrectedReturns_RiskParity_Constrained = MonReturn-Fees_RiskPar(2:end,:);
 ReturnConstrained_Fees = ReturnBaltasRiskPar(LeverageBaltasRiskPar_Constraint,...
     CorrectedReturns_RiskParity_Constrained,OptimalWeights_RiskPar_Constraint);
 cumReturnConstrained_Fees = cumprod((1+ReturnConstrained_Fees)).*100;
+
 
 %% Statistics of Portfolios
 
