@@ -16,7 +16,7 @@ opts.VariableTypes = ["datetime", "double", "double", "double", "double", "doubl
 opts = setvaropts(opts, "date", "InputFormat", "");
 
 % Import the data
-QARMDATA = readtable("C:\Users\Benjamin\OneDrive\1. HEC\Master\MScF 4.2\5. QARM\2020\QARM_Project\QARM_DATA.xlsx", opts, "UseExcel", false);
+QARMDATA = readtable("C:\Users\Benjamin\OneDrive\Documents\GitHub\ASSET_PROJECT\QARM_DATA.xlsx", opts, "UseExcel", false);
 clear opts
 
 %% Creating the vector and parameters we will use :
