@@ -57,28 +57,12 @@ disp('Optimisation is starting !')
 
     for i = LengthSignal+1:LengthMonth:length(Returns) 
         
-        if position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)/10,0)
-            disp('10% Done')
-        elseif position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)/3,0)
-            disp('30% Done')
-        elseif position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)/2,0)
-            disp('50% Done')
-        elseif position == round(round((length(Returns)-LengthSignal)/LengthMonth,0)*3/4,0)
-            disp('75% Done')
-        else %do nothing
-        end% Just print the position to know where we are withing the optimisation
-        
         % Finding the available asset to perform logical indexing on the
         % optimization
         index = Weights(position,:)~=0;  % Vector of 1 if the initial weights is not equal to zero and 0 otherwise. 
-                                         % So there is no need to perform
-                                         % to check wheter the assets are
-                                         % available from LengthSignal days from now
-                                         % (Already done).
-       
-                                         
+                                 
         % Setting the objective function (anonyme function)
-        fun = @(x)sum(log(abs(x))); %Function going over the available assezs (index == 1)
+        fun = @(x) (-1)*sum(log(abs(x))); %Function going over the available assezs (index == 1)
         
         % Finding the LengthVol days covariance matrix
         CovMat = 252*cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
@@ -87,11 +71,13 @@ disp('Optimisation is starting !')
         % asset
         lb = ones(1,length(CovMat))*-1; 
         ub = ones(1,length(CovMat))*1; 
-        
+       
         % Setting linear constraint (Sum of weights = 100%)
-        Aeq = ones(1,length(CovMat)); 
-        beq = 1; 
-    
+        %Aeq = ones(1,length(CovMat)); 
+        %beq = 1; 
+        Aeq = [];
+        beq = [];
+        
         % Setting options
         options = optimoptions('fmincon','Display','off');
         
