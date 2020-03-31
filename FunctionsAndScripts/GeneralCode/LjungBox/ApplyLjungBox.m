@@ -14,5 +14,4 @@ filename = 'Output/AutoCorr.xlsx';
 writetable(AutoCorr_Test,filename,'Sheet',1,'Range','D1','WriteRowNames',true)
 
 
-clear output
-clear datapoints
+clear output filename datapoints;

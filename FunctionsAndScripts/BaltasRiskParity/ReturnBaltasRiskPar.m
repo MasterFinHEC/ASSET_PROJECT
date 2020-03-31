@@ -7,7 +7,7 @@ Strat = zeros(length(Leverage),1);
 
 for a = 1:length(Leverage)-1
     
-    Strat(a) = Leverage(a)*NetWeights(a+3,:)*Returns(a+3,:)';
+    Strat(a) = Leverage(a)*NetWeights(a,:)*Returns(a,:)';
 end 
 end
 

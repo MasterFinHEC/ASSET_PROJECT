@@ -1,14 +1,18 @@
-% The computations of the signals and the weights don't change, we just
-% need to be careful with the indexes. 
+%Finding the optimal weights through FminCon optimisation
+WeightsRiskParity = RiskParityOpti(Signal,WeightsVolParity,returns,targetVol,...
+                          LengthSignal,LengthVol,LengthMonth);
 
-% a. Leverage Computations -> We will create another functions since it
-%    doesn't match well with the other. 
-
-LeverageBaltasRiskPar = LeverageBaltasRiskParity(returns,LengthSignal,LengthMonth,...
-                            LengthVol,RiskPar,targetVol);
+%Finding the leverage and the portfolio Volatility
+[LevRiskPar,PortfolioVolRiskPar] = LeverageRiskParity(WeightsRiskParity,returns,...
+                                                           targetVol,LengthSignal,...
+                                                           LengthVol,LengthMonth); 
 
 % b. Computing the return of the strategy. 
-ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LeverageBaltasRiskPar,MonReturn,RiskPar);
+ReturnBaltasStrategyRiskParity = ReturnBaltasRiskPar(LevRiskPar,MonReturn,WeightsRiskParity);
 
 % Computing Cumulative Returns
-CumReturnLSTFRiskParity = cumprod((ReturnBaltasStrategyRiskParity+1)).*100;
+CumReturnLSTFRP = cumprod((ReturnBaltasStrategyRiskParity+1)).*100;
+
+%Marginal Contribution to risk
+[MarginRiskRiskParity,MargConRiskScaledParity] = MCR(WeightsRiskParity,returns,PortfolioVolRiskPar,...
+                                           LengthSignal,LengthVol,LengthMonth,Signal);

@@ -26,18 +26,18 @@ print(f,'Output/MCRPlots/RepartitionWeights', '-dpng', '-r1000')
 clear f
 
 %% Plot of the Repartition of MCR
-MCRClasses = zeros(length(MarginConRiskScaled),5);
+MCRClasses = zeros(length(MargConRiskScaled),5);
 
 for i = 1:length(MCRClasses)
-    MCRClasses(i,1) = sum(MarginConRiskScaled(i,1:7)) ;
-     MCRClasses(i,2) = sum(MarginConRiskScaled(i,8:11)) ;
-      MCRClasses(i,3) = sum(MarginConRiskScaled(i,12:21)) ;
-       MCRClasses(i,4) = sum(MarginConRiskScaled(i,22:28)) ;
-        MCRClasses(i,5) = sum(MarginConRiskScaled(i,29:35)) ;
+    MCRClasses(i,1) = sum(MargConRiskScaled(i,1:7)) ;
+     MCRClasses(i,2) = sum(MargConRiskScaled(i,8:11)) ;
+      MCRClasses(i,3) = sum(MargConRiskScaled(i,12:21)) ;
+       MCRClasses(i,4) = sum(MargConRiskScaled(i,22:28)) ;
+        MCRClasses(i,5) = sum(MargConRiskScaled(i,29:35)) ;
 end
 
 f = figure('visible','off');
-area(monthdate, MCRClasses(2:end,:))
+area(monthdate, MCRClasses)
 colormap winter
 x0=10;
 y0=10;
@@ -57,13 +57,13 @@ clear f
 
 %% Plot of the Repartition of weights
 
-GrossRiskPar = abs(RiskPar);
+GrossRiskPar = abs(WeightsRiskParity);
 for i = 1:length(GrossRiskPar)
     total = sum(GrossRiskPar(i,:));
     GrossRiskPar(i,:) = GrossRiskPar(i,:)*100/total;
 end
 
-WeightsClassesRiskPar = zeros(length(RiskPar),5);
+WeightsClassesRiskPar = zeros(length(WeightsRiskParity),5);
 
 for i = 1:length(WeightsClassesRiskPar)
     WeightsClassesRiskPar(i,1) = sum(GrossRiskPar(i,1:7));
@@ -89,7 +89,7 @@ title('Repartition of weights through asset classes - Risk Parity')
 xlabel('Years')
 ylabel('Weights')
 ylim([0 100])
-print(f,'Output/MCRPlots/RepartitionOfWeights', '-dpng', '-r300')
+print(f,'Output/MCRPlots/RepartitionOfWeights', '-dpng', '-r301')
 clear f
 
 %% Plot of the Repartition of MCR
@@ -104,7 +104,7 @@ for i = 1:length(MCRClasses)
 end
 
 f = figure('visible','off');
-area(monthdate, MCRClasses(2:end,:))
+area(monthdate, MCRClasses)
 colormap winter
 x0=10;
 y0=10;

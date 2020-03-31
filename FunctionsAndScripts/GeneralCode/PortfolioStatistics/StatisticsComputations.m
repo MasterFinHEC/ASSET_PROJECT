@@ -2,9 +2,10 @@
 Inter_Intra_Correlation;
 
 %Computing the turnovers of the strategies
-[AverageTurnoverRiskParity,TurnoverRiskParity] = turnover(MonReturn,RiskPar);
-[AverageTurnoverVolParity,TurnoverVolParity] = turnover(MonReturn,WeightsVolParity);
-[AverageTurnoverLongOnly,TurnoverLongOnly] = turnover(MonReturn,abs(WeightsVolParity));
+NetWeightsVolParity = Signal.*WeightsVolParity;
+[AverageTurnoverRiskParity,TurnoverRiskParity] = turnover(MonReturn,WeightsRiskParity);
+[AverageTurnoverVolParity,TurnoverVolParity] = turnover(MonReturn,NetWeightsVolParity);
+[AverageTurnoverLongOnly,TurnoverLongOnly] = turnover(MonReturn,WeightsVolParity);
 
 %Computing the correlations events Sharpe ratios
 [SharpeMeanEvent_VolParity,Sharpe_VolParity,Count_VolParity] = CorrelationEvent(LengthSignal,LengthMonth,...
@@ -13,54 +14,38 @@ Inter_Intra_Correlation;
                                         InterCorrAll,ReturnBaltasStrategyRiskParity,0.01);                                    
 
 % Computing the annualized mean    
-Mean_VolPar = prod(ReturnTFLS+1)^(1/(length(ReturnTFLS)/12))-1;
 Mean_VolParBaltas = prod(ReturnBaltasStrategy+1)^(1/(length(ReturnBaltasStrategy)/12))-1;
-Mean_RiskPar = prod(ReturnRiskParity+1)^(1/(length(ReturnRiskParity)/12))-1;
 Mean_RiskParBaltas = prod(ReturnBaltasStrategyRiskParity+1)^(1/(length(ReturnBaltasStrategyRiskParity)/12))-1;
 Mean_LongOnly = prod(ReturnTFLO+1)^(1/(length(ReturnTFLO)/12))-1;
 
 %Annualized Volatility
-Vola_VolPar = std(ReturnTFLS)*sqrt(12);
 Vola_VolParBaltas = std(ReturnBaltasStrategy)*sqrt(12);
-Vola_RiskPar = std(ReturnRiskParity)*sqrt(12);
 Vola_RiskParBaltas = std(ReturnBaltasStrategyRiskParity)*sqrt(12);
 Vola_LongOnly = std(ReturnTFLO)*sqrt(12);
 
-
 % Computing the total Sharpe Ratios
-SharpeRatio_VolPar = SharpeRatio(ReturnTFLS,0.01);
 SharpeRatio_VolParBaltas = SharpeRatio(ReturnBaltasStrategy,0.01);
-SharpeRatio_RiskPar = SharpeRatio(ReturnRiskParity,0.01);
 SharpeRatio_RiskParBaltas = SharpeRatio(ReturnBaltasStrategyRiskParity,0.01);
 SharpeRatio_LongOnly = SharpeRatio(ReturnTFLO,0.01);
 
-
 % Computing the Maximum DrawDowns
-MDD_VolParity = MDD(ReturnTFLS);
 MDD_VolParityBaltas = MDD(ReturnBaltasStrategy);
-MDD_RiskParity = MDD(ReturnRiskParity);
 MDD_RiskParityBaltas = MDD(ReturnBaltasStrategyRiskParity);
 MDD_VolParityLongOnly = MDD(ReturnTFLO);
 
 %CalmarRatio
-Calmar_VolPar = Mean_VolPar/MDD_VolParity;
 Calmar_VolParBaltas = Mean_VolParBaltas/MDD_VolParityBaltas;
-Calmar_RiskPar = Mean_RiskPar/MDD_RiskParity;
 Calmar_RiskParBaltas = Mean_RiskParBaltas/MDD_RiskParityBaltas;
 Calmar_LongOnly = Mean_LongOnly/MDD_VolParityLongOnly;
 
 
 % Computing the Kurtosis 
-Kur_VolParity = kurtosis(ReturnTFLS);
 Kur_VolParityBaltas = kurtosis(ReturnBaltasStrategy);
-Kur_RiskParity = kurtosis(ReturnRiskParity);
 Kur_RiskParityBaltas = kurtosis(ReturnBaltasStrategyRiskParity);
 Kur_VolParityLongOnly = kurtosis(ReturnTFLO);
 
 % Computing the Skewness
-Skew_VolParity = skewness(ReturnTFLS);
 Skew_VolParityBaltas = skewness(ReturnBaltasStrategy);
-Skew_RiskParity = skewness(ReturnRiskParity);
 Skew_RiskParityBaltas = skewness(ReturnBaltasStrategyRiskParity);
 Skew_VolParityLongOnly = skewness(ReturnTFLO);
 

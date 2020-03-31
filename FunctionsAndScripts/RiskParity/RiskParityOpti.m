@@ -62,43 +62,50 @@ disp('Optimisation is starting !')
         index = Weights(position,:)~=0;  % Vector of 1 if the initial weights is not equal to zero and 0 otherwise. 
                                  
         % Setting the objective function (anonyme function)
-        fun = @(x) (-1)*sum(log(abs(x))); %Function going over the available assezs (index == 1)
+        fun = @(x) -(sum(log(abs(x)))); %Function going over the available assets (index == 1)
         
         % Finding the LengthVol days covariance matrix
-        CovMat = 252*cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
+        CovMat = cov(Returns(i-LengthVol+1:i,index==1)); %Covariance of the available assets (index == 1)
         
         % Setting optimisation bounds on weights ->  can take leverage on an
         % asset
-        lb = ones(1,length(CovMat))*-1; 
-        ub = ones(1,length(CovMat))*1; 
-       
+        lb = [];
+        ub = [];
+      % lb = ones(1,length(CovMat))*-1; 
+       %ub = ones(1,length(CovMat));
+ 
+        
         % Setting linear constraint (Sum of weights = 100%)
-        %Aeq = ones(1,length(CovMat)); 
-        %beq = 1; 
-        Aeq = [];
-        beq = [];
+        Aeq = ones(1,length(CovMat));
+        beq = 1;
         
         % Setting options
-        options = optimoptions('fmincon','Display','off');
+        options = optimoptions(@fmincon,'Algorithm','interior-point',...
+    'MaxIterations',100000,'ConstraintTolerance',1.0000e-6, ...
+    'OptimalityTolerance',1.0000e-6,'MaxFunctionEvaluations',...
+    100000,'Display','none');
+   
         
         % Optimizing the month's weights 
-         WeightsOpti(position,index==1) = fmincon(@(x) fun(x),NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,@(x) VolConstraint(x,Target,CovMat),options);
+         WeightsOpti(position,index==1) = fmincon(fun,NetWeights(position,index==1),A,b,Aeq,beq,lb,ub,@(x)VolConstraint(x,Target,CovMat),options);
         
         %Rescaling Weights
-        SumWeights = 0; 
+        %SumWeights = 0; 
         
         %Loop adding the existing weights
-        for x = 1:asset
-            if WeightsOpti(position,x) ~= 0
-                SumWeights = SumWeights + WeightsOpti(position,x);
-            end 
-        end 
+        %for x = 1:asset
+            %if WeightsOpti(position,x) ~= 0
+              %  SumWeights = SumWeights + WeightsOpti(position,x);
+            %end 
+        %end 
        
         %Finding the weights in %
-        WeightsOpti(position,:) = WeightsOpti(position,:)/SumWeights;
+       %WeightsOpti(position,:) = WeightsOpti(position,:)/SumWeights;
          
         % Going for the next rebalancing 
+        disp(position);
         position = position + 1;
+       
     end
     
     disp('Optimisation is finished !')

@@ -1,4 +1,4 @@
-function [Leverage] = LeverageBaltas(Returns,LengthSignal,LengthMonth,LengthVol,Weights,Signal,targetVol)
+function [Leverage,VolPort] = LeverageBaltas(Returns,LengthSignal,LengthMonth,LengthVol,Weights,Signal,targetVol)
 %This function compute the running volatility of a portolio using the
 %previous weights and volatility for LengthVol Days
 
@@ -12,6 +12,7 @@ function [Leverage] = LeverageBaltas(Returns,LengthSignal,LengthMonth,LengthVol,
 % Pre-Allocation the size of the output
 NumberofRebalancing = round((length(Returns)-LengthSignal-LengthVol)/LengthMonth,0);
 Leverage = zeros(NumberofRebalancing,1);
+VolPort = zeros(NumberofRebalancing,1);
 
 % Computing the NetWeights
 NetWeights = Weights.*Signal;
@@ -44,7 +45,8 @@ for i = (LengthSignal)+1:LengthMonth:length(Returns)-LengthVol
     
     %Finding the leverage
     Leverage(position) = targetVol/Vola;
-    
+    VolPort(position) = Vola;
+   
     position = position + 1;
 end 
 
