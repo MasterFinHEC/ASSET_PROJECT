@@ -18,7 +18,7 @@ This paper is implementing mainly two strategies :
 The main observation is that the risk parity weighting scheme allows the strategy to be more robust in high correlation regime between asset class and to be even more un-correlated with the market, and therefore, be market neutral. 
 
 ## Implementation
-On this repository, you'll find one principal code "Main3.m" that launch every other script and function, you just need to change the local path of the code and load "Kevin Sheperd ToolBox" at the beginning of the code, as follow:
+On this repository, you'll find one principal code "Main3.m" that launch every other script and function, you just need to change the local path of the code and load "Kevin Sheperd ToolBox" at the beginning of the code ("Main.3"), as follow:
 
 ```
 addpath(genpath('Your_directory_where_you_will_use_the_code'))
