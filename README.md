@@ -3,7 +3,7 @@ Quantitative and Asset Management Project
 - Msc. Science in Finance - HEC Lausanne
 - Prof. Eric Jondeau
 
-![alt text](https://upload.wikimedia.org/wikipedia/commons/a/a3/HEC_Lausanne_logo.svg "HEC Lausanne Logo")
+![alt text](https://upload.wikimedia.org/wikipedia/commons/a/a3/HEC_Lausanne_logo.svg "HEC Lausanne Logo") ![alt text](https://banner2.cleanpng.com/20180607/b/kisspng-matlab-mathworks-simulink-computer-software-eigenf-deep-learning-5b196403700b54.8609250515283906594589.jpg "Matlab Logo")
 
 ## Project
 The goal of this project is to replicate and improve the following paper : 
