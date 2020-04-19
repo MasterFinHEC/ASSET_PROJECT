@@ -26,6 +26,8 @@ addpath(genpath('Your_directory_where_you_will_use_the_code'))
 addpath(genpath('Your_local_path_for_KevinSheperdToolBox'))
 ```
 
+You can find "Kevin Sheperd ToolBox" [here](https://github.com/bashtage/mfe-toolbox).
+
 The following strategy are implemented : 
 
 - Trend-Following Volatility Parity.
@@ -55,6 +57,9 @@ The output of the code will be generate inside the "Output" folders and the sub-
 There is the data, we have used the create the project in the repository. However, the code should work for every dataset of continuous futures contract and even standard prices. The only part of the code that is not interchangeable are the graph generate by asset class. Thus, if you change the data, you would need to change a bit of code. 
 
 Our data is a dataset of 35 futures prices that belongs to five asset classes. The sample is starting in 1989 and ending in 2020, however not all data are available at the beginning and the data is full only in 2016. 
+
+## Author
+
 
 ## Acknowledgment 
  
