@@ -1,6 +1,8 @@
 # ASSET_PROJECT
+
 ![Matlab Badge](https://img.shields.io/badge/matlab-2019B-orange)
-Quantitative and Asset Management Project
+
+- Quantitative and Asset Management Project
 - Msc. Science in Finance - HEC Lausanne
 - Prof. Eric Jondeau
 
