@@ -9,7 +9,7 @@
 ![alt text](https://upload.wikimedia.org/wikipedia/commons/a/a3/HEC_Lausanne_logo.svg "HEC Lausanne Logo")
 
 ## Project
-The goal of this project is to replicate and improve the following paper : 
+The goal of this project is to replicate and try to improve the following paper : 
 
 ["Trend-Following, Risk-Parity and the Influence of Correlations"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2673124) . Nick Baltas 2015. 
 
