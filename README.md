@@ -62,7 +62,10 @@ There is the data, we have used the create the project in the repository. Howeve
 Our data is a dataset of 35 futures prices that belongs to five asset classes. The sample is starting in 1989 and ending in 2020, however not all data are available at the beginning and the data is full only in 2016. 
 
 ## Author
-
+- **Benjamin Souane**
+- **Antoine-Michel Alexeev**
+- **Ludovic Suchet**
+- **Julien Bisch**
 
 ## Acknowledgment 
  
